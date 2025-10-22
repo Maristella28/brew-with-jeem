@@ -69,7 +69,7 @@ services:
       - key: MAIL_FROM_NAME
         value: Coffee Ni Jeem
       - key: SANCTUM_STATEFUL_DOMAINS
-        value: your-frontend-domain.com
+        value: brew-with-jeem.netlify.app
 
 databases:
   - name: coffee-ni-jeem-db
