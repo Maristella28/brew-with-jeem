@@ -5,6 +5,12 @@ set -e
 
 echo "Starting Laravel deployment setup..."
 
+# Create .env file if it doesn't exist
+if [ ! -f "/var/www/html/.env" ]; then
+    echo "Creating .env file..."
+    cp /var/www/html/.env.example /var/www/html/.env
+fi
+
 # Generate application key if not set
 if [ -z "$APP_KEY" ]; then
     echo "Generating application key..."
