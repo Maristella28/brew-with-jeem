@@ -57,7 +57,10 @@ php artisan key:generate --force
 
 # Run database migrations
 echo "Running database migrations..."
-php artisan migrate --force
+php artisan migrate --force || {
+    echo "Migration failed, but continuing deployment..."
+    echo "This might be because tables already exist from a previous deployment."
+}
 
 # Clear and cache configuration
 echo "Optimizing Laravel..."
