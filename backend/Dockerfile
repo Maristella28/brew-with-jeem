@@ -28,8 +28,28 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 # Copy custom Nginx configuration
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Expose port 80
-EXPOSE 80
+# Expose port for Render
+EXPOSE 10000
 
-# Start deployment script, then Nginx and PHP-FPM
-CMD /usr/local/bin/deploy.sh && service nginx start && php-fpm
+# Create startup script
+RUN echo '#!/bin/bash\n\
+set -e\n\
+\n\
+# Set PORT for Render (default 10000)\n\
+export PORT="${PORT:-10000}"\n\
+\n\
+echo "Running deployment setup..."\n\
+/usr/local/bin/deploy.sh\n\
+\n\
+echo "Configuring Nginx to listen on port $PORT..."\n\
+sed -i "s/listen 80;/listen $PORT;/" /etc/nginx/conf.d/default.conf\n\
+\n\
+echo "Starting PHP-FPM in background..."\n\
+php-fpm -D\n\
+\n\
+echo "Starting Nginx on port $PORT..."\n\
+exec nginx -g "daemon off;"\n\
+' > /start.sh && chmod +x /start.sh
+
+# Start services
+CMD ["/start.sh"]
